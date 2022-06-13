@@ -29,7 +29,7 @@ jobs:
     - name: Checkout pidgin repo
       uses: actions/checkout@v3
       with:
-        repository: renatosilva/pidgin-windev
+        repository: yurcn/pidgin-windev
         path: pidgin-windev
         
     - name: Set up Cygwin
