@@ -36,10 +36,7 @@ jobs:
       uses: egor-tensin/setup-cygwin@v3
       with:
         platform: x64
-        packages: sed lynx wget bzip2 gzip zip tar
-        
-    - name: bump pidgin version
-      run: sed.exe -ie 's/2.11.0/2.14.9/' pidgin-windev/pidgin-windev.sh
+        packages: sed lynx wget bzip2 gzip zip tar bsdtar
 
     - name: run pidgin-windev script
       run: bash.exe -o igncr pidgin-windev/pidgin-windev.sh pidgin-devel
