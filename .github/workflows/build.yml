@@ -10,6 +10,9 @@ env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: .
   SHELLOPTS: igncr
+  PIDGIN_TREE_TOP: pidgin-devel/pidgin-2.14.9
+  WIN32_DEV_TOP: pidgin-devel/win32-dev
+  PKG_CONFIG_PATH: pidgin-devel/win32-dev/lib/pkgconfig
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -47,7 +50,7 @@ jobs:
 
     - name: build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: PIDGIN_TREE_TOP="pidgin-devel/pidgin-2.14.9" WIN32_DEV_TOP="pidgin-devel/win32-dev" PKG_CONFIG_PATH="pidgin-devel/win32-dev/lib/pkgconfig" make
+      run: make
       
     - name: create package dir
       run: mkdir package
