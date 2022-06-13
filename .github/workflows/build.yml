@@ -40,6 +40,10 @@ jobs:
 
     - name: run pidgin-windev script
       run: bash.exe -o igncr pidgin-windev/pidgin-windev.sh pidgin-devel
+      
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
 
     - name: build
       working-directory: ${{env.GITHUB_WORKSPACE}}
