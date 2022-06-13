@@ -1,0 +1,48 @@
+name: mingwBuild
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Checkout pidgin repo
+      uses: actions/checkout@v3
+      with:
+        repository: renatosilva/pidgin-windev
+        path: pidgin-windev
+        
+    - name: Set up Cygwin
+      uses: egor-tensin/setup-cygwin@v3
+      with:
+        platform: x64
+        packages: sed
+        
+    - name: bump pidgin version
+      run: sed.exe -ie 's/2.11.0/2.14.9/' pidgin-windev/pidgin-windev.sh
+
+    - name: run pidgin-windev script
+      run: bash.exe pidgin-windev/pidgin-windev.sh pidgin-devel
+
+    - name: build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: PIDGIN_TREE_TOP="pidgin-devel/pidgin-2.14.9" WIN32_DEV_TOP="pidgin-devel/win32-dev" make
