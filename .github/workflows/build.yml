@@ -44,3 +44,17 @@ jobs:
     - name: build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: PIDGIN_TREE_TOP="pidgin-devel/pidgin-2.14.9" WIN32_DEV_TOP="pidgin-devel/win32-dev" make
+      
+    - name: create package dir
+      run: mkdir package
+      
+    - name: copy plugin into the package dir
+      run: cp jabber_http_file_upload.dll package/
+  
+    - name: publish package
+      uses: actions/upload-artifact@v2
+      with: 
+        name: assets-for-download
+        path: package
+        
+      
