@@ -48,13 +48,16 @@ jobs:
       uses: mxschmitt/action-tmate@v3
       
     - name: prepare build directories
-      run: mv pidgin-devel/pidgin-2.14.9 pidgin-devel/win32-dev ../ 
+      run: /usr/bin/mv pidgin-devel/pidgin-2.14.9 pidgin-devel/win32-dev ../ 
       
     - name: patch makefile
       run: sed -ie 's/pidgin-2.10.11/pidgin-2.14.9/' makefile.mingw
+      
+    - name: fix glib path
+      run: sed -ie 's/glib-2.28.8/gtk_2_0-2.14/' makefile.mingw
 
     - name: build w64 binary
-      run: mingw-w64 makefile.mingw
+      run: make -f makefile.mingw
       
     - name: Setup tmate session if build failed
       if: ${{ failure() }}
