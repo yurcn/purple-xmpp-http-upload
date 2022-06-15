@@ -57,9 +57,9 @@ jobs:
         sed -i -e 's/libxml2-2.9.0/libxml2-2.9.2_daa1/g' makefile.mingw
         sed -i -e 's/SUBDIRS = gg irc jabber novell null sametime silc simple bonjour/SUBDIRS = jabber/g' ../pidgin-2.14.9/libpurple/protocols/Makefile.mingw
         cd ../pidgin-2.14.9
-        PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw
-        cd libpurple/protocols/jabber
-        PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw
+        PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw || true
+        cd libpurple/protocols/jabber 
+        PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw || true
         cd /d/a/purple-xmpp-http-upload/purple-xmpp-http-upload/
         make -f makefile.mingw
      
