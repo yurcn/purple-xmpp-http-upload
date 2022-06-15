@@ -1,14 +1,17 @@
-name: mingwBuild
+name: mingw-windll-build
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: .
+  SHELLOPTS: igncr
+  PIDGIN_TREE_TOP: ../pidgin-2.14.9/
+  WIN32_DEV_TOP: ../pidgin-2.14.9/win32-dev/
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -25,24 +28,59 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Checkout pidgin repo
+    - name: Checkout pidgin-windev repo
       uses: actions/checkout@v3
       with:
-        repository: renatosilva/pidgin-windev
+        repository: yurcn/pidgin-windev
         path: pidgin-windev
         
     - name: Set up Cygwin
       uses: egor-tensin/setup-cygwin@v3
       with:
         platform: x64
-        packages: sed
-        
-    - name: bump pidgin version
-      run: sed.exe -ie 's/2.11.0/2.14.9/' pidgin-windev/pidgin-windev.sh
+        packages: sed lynx wget bzip2 gzip tar bsdtar unzip ca-certificates zip
 
     - name: run pidgin-windev script
-      run: bash.exe pidgin-windev/pidgin-windev.sh pidgin-devel
+      run: bash.exe -o igncr pidgin-windev/pidgin-windev.sh pidgin-devel
+          
+    - name: prepare build directories 
+      shell: bash
+      run: |
+        echo $PATH
+        PATH="D:/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:/cygdrive/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:../pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH"
+        mv pidgin-devel/pidgin-2.14.9 ../ 
+        mv pidgin-devel/win32-dev ../pidgin-2.14.9/
+        sed -i -e 's/pidgin-2.10.11/pidgin-2.14.9/g' makefile.mingw
+        sed -i -e 's/glib-2.28.8/gtk_2_0-2.14/g' makefile.mingw
+        sed -i -e 's/libxml2-2.9.0/libxml2-2.9.2_daa1/g' makefile.mingw
+        sed -i -e 's/SUBDIRS = gg irc jabber novell null sametime silc simple bonjour/SUBDIRS = jabber/g' ../pidgin-2.14.9/libpurple/protocols/Makefile.mingw
+        cd ../pidgin-2.14.9
+        PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw || true
+        cd libpurple/protocols/jabber 
+        PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw || true
+        cd /cygdrive/d/a/purple-xmpp-http-upload/purple-xmpp-http-upload/
+        make -f makefile.mingw
+        zip --junk-paths http-file-upload-windll jabber_http_file_upload.dll
 
-    - name: build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: PIDGIN_TREE_TOP="pidgin-devel/pidgin-2.14.9" WIN32_DEV_TOP="pidgin-devel/win32-dev" make
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./http-file-upload-windll.zip
+        asset_name: http-file-upload-windll.zip
+        asset_content_type: application/zip        
+      
