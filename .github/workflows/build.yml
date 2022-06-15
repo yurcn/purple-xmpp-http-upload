@@ -48,6 +48,7 @@ jobs:
       uses: mxschmitt/action-tmate@v3
       
     - name: prepare build directories 
+      shell: bash
       run: |
         mv pidgin-devel/pidgin-2.14.9 ../ 
         mv pidgin-devel/win32-dev ../pidgin-2.14.9/
