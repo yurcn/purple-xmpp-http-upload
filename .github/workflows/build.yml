@@ -48,8 +48,15 @@ jobs:
     - name: prepare build directories 
       shell: bash
       run: |
-        PATH="D:/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH"
+        echo $PATH
+        which make
+        which cc
+        which gcc
+        PATH="D:/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:../pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH"
         export PATH
+        which make
+        which cc
+        which gcc
         mv pidgin-devel/pidgin-2.14.9 ../ 
         mv pidgin-devel/win32-dev ../pidgin-2.14.9/
         sed -i -e 's/pidgin-2.10.11/pidgin-2.14.9/g' makefile.mingw
@@ -61,7 +68,7 @@ jobs:
         cd libpurple/protocols/jabber 
         PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw || true
         cd ../../../purple-xmpp-http-upload/
-        make -f makefile.mingw
+        make -f makefile.mingw 
      
     - name: Setup tmate session if build failed
       if: ${{ failure() }}
