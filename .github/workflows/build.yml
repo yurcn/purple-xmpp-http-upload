@@ -10,8 +10,8 @@ env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: .
   SHELLOPTS: igncr
-  PIDGIN_TREE_TOP: ../pidgin-2.14.9
-  WIN32_DEV_TOP: ../win32-dev
+  PIDGIN_TREE_TOP: ../pidgin-2.14.9/
+  WIN32_DEV_TOP: ../pidgin-2.14.9/win32-dev/
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -47,8 +47,9 @@ jobs:
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
       
-    - name: prepare build directories
-      run: /usr/bin/mv pidgin-devel/pidgin-2.14.9 pidgin-devel/win32-dev ../ 
+    - name: prepare build directories 
+      run: mv pidgin-devel/pidgin-2.14.9 ../ 
+    - run: mv pidgin-devel/win32-dev ../pidgin-2.14.9/
       
     - name: patch makefile
       run: sed -ie 's/pidgin-2.10.11/pidgin-2.14.9/' makefile.mingw
