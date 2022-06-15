@@ -36,7 +36,7 @@ jobs:
       uses: egor-tensin/setup-cygwin@v3
       with:
         platform: x64
-        packages: sed lynx wget bzip2 gzip tar bsdtar unzip apt-cyg ca-certificates zip
+        packages: sed lynx wget bzip2 gzip tar bsdtar unzip ca-certificates zip
 
     - name: run pidgin-windev script
       run: bash.exe -o igncr pidgin-windev/pidgin-windev.sh pidgin-devel
@@ -60,7 +60,7 @@ jobs:
         PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw || true
         cd libpurple/protocols/jabber 
         PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw || true
-        cd ../../../purple-xmpp-http-upload/
+        cd /cygdrive/d/a/purple-xmpp-http-upload/purple-xmpp-http-upload/
         make -f makefile.mingw 
      
     - name: Setup tmate session if build failed
