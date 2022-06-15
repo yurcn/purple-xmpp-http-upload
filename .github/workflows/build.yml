@@ -1,10 +1,8 @@
 name: mingwBuild
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  release:
+    types: [published]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -50,6 +48,8 @@ jobs:
     - name: prepare build directories 
       shell: bash
       run: |
+        PATH="/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH"
+        export PATH
         mv pidgin-devel/pidgin-2.14.9 ../ 
         mv pidgin-devel/win32-dev ../pidgin-2.14.9/
         sed -i -e 's/pidgin-2.10.11/pidgin-2.14.9/g' makefile.mingw
@@ -57,11 +57,11 @@ jobs:
         sed -i -e 's/libxml2-2.9.0/libxml2-2.9.2_daa1/g' makefile.mingw
         sed -i -e 's/SUBDIRS = gg irc jabber novell null sametime silc simple bonjour/SUBDIRS = jabber/g' ../pidgin-2.14.9/libpurple/protocols/Makefile.mingw
         cd ../pidgin-2.14.9
-        PATH="/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH" PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw
+        PIDGIN_TREE_TOP='..' LIBXML2_TOP=../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../win32-dev/gtk_2_0-2.14/  make -f Makefile.mingw
         cd libpurple/protocols/jabber
-        PATH="/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH" PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw
+        PIDGIN_TREE_TOP='../../..' LIBXML2_TOP=../../../win32-dev/libxml2-2.9.2_daa1/ GTK_TOP=../../../win32-dev/gtk_2_0-2.14/ CYRUS_SASL_TOP=../../../win32-dev/cyrus-sasl-2.1.26_daa1/ make -f Makefile.mingw
         cd /d/a/purple-xmpp-http-upload/purple-xmpp-http-upload/
-        PATH="/d/a/purple-xmpp-http-upload/pidgin-2.14.9/win32-dev/mingw-gcc-4.7.2/bin/:$PATH" make -f makefile.mingw
+        make -f makefile.mingw
      
     - name: Setup tmate session if build failed
       if: ${{ failure() }}
