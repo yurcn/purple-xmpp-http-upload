@@ -52,10 +52,10 @@ jobs:
     - run: mv pidgin-devel/win32-dev ../pidgin-2.14.9/
       
     - name: patch makefile
-      run: sed -ie 's/pidgin-2.10.11/pidgin-2.14.9/' makefile.mingw
+      run: sed -ie 's/pidgin-2.10.11/pidgin-2.14.9/g' makefile.mingw
       
     - name: fix glib path
-      run: sed -ie 's/glib-2.28.8/gtk_2_0-2.14/' makefile.mingw
+      run: sed -ie 's/glib-2.28.8/gtk_2_0-2.14/g' makefile.mingw
 
     - name: build w64 binary
       run: make -f makefile.mingw
